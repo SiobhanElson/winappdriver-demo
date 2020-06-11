@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using OpenQA.Selenium.Appium;
@@ -31,7 +32,7 @@ namespace WinAppDriverExample
             //Otherwise use this to launch the app:
             options.AddAdditionalCapability("app", _config["PathToApplicationUnderTest"]);
 
-             _winDriver =  new WindowsDriver<WindowsElement>(new Uri(_config["WinAppDriverUrl"]), options);
+            _winDriver = new WindowsDriver<WindowsElement>(new Uri(_config["WinAppDriverUrl"]), options);
         }
 
         [TearDown]
@@ -55,6 +56,12 @@ namespace WinAppDriverExample
             //you can also use FindElementByAccessibilityId for x:Name.
             //if AutomationProperties.AutomationId is also on the element then FindElementByAccessibilityId will expect that value instead
             var result = _winDriver.FindElementByAccessibilityId("ResultWindow");
+            var timer = new Stopwatch();
+            timer.Start();
+            while (result.Text != "Input was stuff" && timer.Elapsed < TimeSpan.FromSeconds(5))
+            {
+            }
+
             Assert.That(result.Text, Is.EqualTo("Input was stuff"), "Result text is incorrect");
         }
     }
